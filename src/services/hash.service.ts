@@ -1,14 +1,15 @@
 import BigNumber from "bignumber.js";
 import { of } from "await-of";
 import { ethers, utils } from "ethers";
-import { getRepository } from "typeorm";
+import { getConnection } from "typeorm";
 import { Hash, ResultStatusEnum } from "../entity/hash.entity";
 
 export class HashService {
-  constructor(private hashRepository = getRepository(Hash)) {}
+  constructor() {}
+  private hashRepository = getConnection().getRepository(Hash);
 
   async findingNonce(job) {
-    if (job && job.status === ResultStatusEnum.PENDING) {
+    if (job?.data && job.data.status === ResultStatusEnum.PENDING) {
       const [processRecord, processError] = await of(
         this.hashRepository.findOne({
           where: {
@@ -58,7 +59,11 @@ export class HashService {
       const initialHash = new BigNumber(input_hex, 16);
       const { start_process_nonce, end_process_nonce } = nonce_range;
       let nonce = new BigNumber(start_process_nonce);
-      for (let i = start_process_nonce; i < end_process_nonce; i++) {
+      for (
+        let i = Number(start_process_nonce);
+        i < Number(end_process_nonce);
+        i++
+      ) {
         const input = BigNumber.sum(new BigNumber(input_hex, 16), nonce);
         const hash = this.generateHash(input);
         const newHash = new BigNumber(hash, 16);

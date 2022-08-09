@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { ConnectionOptions, createConnection } from "typeorm";
 import dotenv from "dotenv";
 import { InitializeQueue } from "./src/queue/hash.queue";
+import { Hash } from "./src/entity/hash.entity";
 
 dotenv.config();
 
@@ -16,14 +17,15 @@ const {
 
 const initializeQueue = new InitializeQueue();
 
-const connection = async () => {
-  await createConnection({
+export const connection = async () => {
+  return await createConnection({
     type: DB_CONNECTION,
     host: POSTGRES_HOST,
     port: POSTGRES_PORT,
     username: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
     database: POSTGRES_DB,
+    entities: [Hash],
     synchronize: true,
   } as ConnectionOptions);
 };
@@ -35,7 +37,7 @@ async function queue() {
 
 async function main() {
   await connection();
-  queue();
+  await queue();
 }
 
 main();

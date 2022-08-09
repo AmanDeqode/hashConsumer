@@ -6,7 +6,6 @@ dotenv.config();
 
 export class InitializeQueue {
   initialize() {
-    console.log("called");
     return new Bull("upload-hash", {
       redis: {
         host: process.env.REDIS_HOST,
@@ -16,7 +15,6 @@ export class InitializeQueue {
   }
 
   processQueue() {
-    console.log("processQueue");
     this.initialize().process("valid-nonce", hashConsumer);
   }
 }

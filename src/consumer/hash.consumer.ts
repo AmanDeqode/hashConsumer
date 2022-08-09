@@ -3,10 +3,7 @@ import { HashService } from "../services/hash.service";
 
 async function hashConsumer(job: Job) {
   try {
-    console.log("job", job.data);
-    const hashService = new HashService();
-
-    hashService.findingNonce(job?.data);
+    await new HashService().findingNonce(job);
   } catch (error) {
     throw new Error(error.message);
   }
